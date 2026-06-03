@@ -296,55 +296,110 @@
                 pointer-events: auto;
             }
 
-            /* RESPONSIVE BREAKPOINTS */
-            @media (max-width: 768px) {
-                .nav {
-                    padding: 14px 20px;
+            /* TOAST NOTIFICATION */
+            .toast-container {
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                z-index: 1000;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                pointer-events: none;
+            }
+            .toast {
+                background: var(--paper);
+                border: var(--border);
+                border-radius: var(--radius-sm);
+                box-shadow: var(--shadow);
+                padding: 16px 20px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                min-width: 320px;
+                max-width: 400px;
+                pointer-events: auto;
+                animation: slideIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            }
+            .toast.hide {
+                animation: slideOut 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            }
+            .toast.error {
+                border-left: 6px solid var(--coral);
+            }
+            .toast.success {
+                border-left: 6px solid var(--teal);
+            }
+            .toast.warning {
+                border-left: 6px solid var(--butter);
+            }
+            .toast-ico {
+                width: 32px;
+                height: 32px;
+                border-radius: 8px;
+                display: grid;
+                place-items: center;
+                flex-shrink: 0;
+            }
+            .toast.error .toast-ico {
+                background: #ffe0db;
+                color: var(--coral);
+            }
+            .toast.success .toast-ico {
+                background: #d8f8f3;
+                color: var(--teal);
+            }
+            .toast.warning .toast-ico {
+                background: #fff3c4;
+                color: #7a5a00;
+            }
+            .toast-content {
+                flex: 1;
+            }
+            .toast-title {
+                font-family: "Clash Display";
+                font-weight: 600;
+                font-size: 14px;
+                margin-bottom: 2px;
+            }
+            .toast-msg {
+                font-size: 12.5px;
+                color: var(--ink-soft);
+                line-height: 1.4;
+            }
+            .toast-close {
+                width: 24px;
+                height: 24px;
+                border: none;
+                background: transparent;
+                cursor: pointer;
+                display: grid;
+                place-items: center;
+                opacity: 0.5;
+                transition: opacity 0.2s;
+            }
+            .toast-close:hover {
+                opacity: 1;
+            }
+
+            @keyframes slideIn {
+                from {
+                    transform: translateX(400px);
+                    opacity: 0;
                 }
-                .nav-desktop {
-                    display: none;
-                }
-                .nav-toggle {
-                    display: flex;
-                }
-                .wrap {
-                    padding: 24px 20px;
-                }
-                .hero h1 {
-                    font-size: 38px;
-                }
-                .grid {
-                    grid-template-columns: 1fr;
-                    gap: 24px;
-                }
-                .result-hero {
-                    grid-template-columns: 1fr;
-                    text-align: center;
-                }
-                .result-hero .ring {
-                    margin: 0 auto;
-                }
-                .result-hero .score {
-                    font-size: 64px;
-                }
-                .insights {
-                    grid-template-columns: 1fr;
-                }
-                footer {
-                    padding: 20px;
-                    flex-direction: column;
-                    text-align: center;
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
                 }
             }
-            @media (max-width: 480px) {
-                .hero h1 {
-                    font-size: 30px;
+            @keyframes slideOut {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
                 }
-                .logo span {
-                    font-size: 17px;
-                }
-                .card-body {
-                    padding: 18px;
+                to {
+                    transform: translateX(400px);
+                    opacity: 0;
                 }
             }
 
@@ -407,17 +462,6 @@
                 display: grid;
                 grid-template-columns: 420px 1fr;
                 gap: 32px;
-            }
-            @media (max-width: 1024px) {
-                .grid {
-                    grid-template-columns: 1fr;
-                }
-                .hero {
-                    grid-template-columns: 1fr;
-                }
-                .hero-meta {
-                    align-items: start;
-                }
             }
 
             /* CARD BASE */
@@ -785,11 +829,6 @@
                 grid-template-columns: repeat(3, 1fr);
                 gap: 16px;
             }
-            @media (max-width: 900px) {
-                .insights {
-                    grid-template-columns: 1fr;
-                }
-            }
             .insight {
                 padding: 20px;
                 background: var(--paper);
@@ -1022,6 +1061,78 @@
             .hidden {
                 display: none !important;
             }
+
+            /* RESPONSIVE */
+            @media (max-width: 1024px) {
+                .grid {
+                    grid-template-columns: 1fr;
+                }
+                .hero {
+                    grid-template-columns: 1fr;
+                }
+                .hero-meta {
+                    align-items: start;
+                }
+            }
+            @media (max-width: 768px) {
+                .nav {
+                    padding: 14px 20px;
+                }
+                .nav-desktop {
+                    display: none;
+                }
+                .nav-toggle {
+                    display: flex;
+                }
+                .wrap {
+                    padding: 24px 20px;
+                }
+                .hero h1 {
+                    font-size: 38px;
+                }
+                .grid {
+                    grid-template-columns: 1fr;
+                    gap: 24px;
+                }
+                .result-hero {
+                    grid-template-columns: 1fr;
+                    text-align: center;
+                }
+                .result-hero .ring {
+                    margin: 0 auto;
+                }
+                .result-hero .score {
+                    font-size: 64px;
+                }
+                .insights {
+                    grid-template-columns: 1fr;
+                }
+                footer {
+                    padding: 20px;
+                    flex-direction: column;
+                    text-align: center;
+                }
+                .toast-container {
+                    top: 70px;
+                    right: 10px;
+                    left: 10px;
+                }
+                .toast {
+                    min-width: auto;
+                    max-width: none;
+                }
+            }
+            @media (max-width: 480px) {
+                .hero h1 {
+                    font-size: 30px;
+                }
+                .logo span {
+                    font-size: 17px;
+                }
+                .card-body {
+                    padding: 18px;
+                }
+            }
         </style>
     </head>
     <body>
@@ -1048,16 +1159,17 @@
                 >
             </div>
 
-            <!-- Desktop Nav -->
-            <div class="nav-desktop">
+            <div
+                class="nav-desktop"
+                style="display: flex; gap: 10px; align-items: center"
+            >
                 <span class="nav-tag">Tsukamoto Engine</span>
                 <span class="nav-tag lime" style="background: var(--lime)"
-                    >v2.0</span
+                    >v2.1</span
                 >
                 <span class="nav-tag">JUTIF Unsoed</span>
             </div>
 
-            <!-- Mobile Hamburger -->
             <button
                 class="nav-toggle"
                 id="navToggle"
@@ -1070,7 +1182,6 @@
             </button>
         </nav>
 
-        <!-- Mobile Dropdown Menu -->
         <div class="nav-mobile" id="navMobile">
             <div class="nav-mobile-inner">
                 <div class="nav-mobile-head">
@@ -1107,7 +1218,10 @@
                     <a
                         href="#"
                         class="nav-mobile-item"
-                        onclick="scrollToSection('inputSection')"
+                        onclick="
+                            scrollToSection('inputSection');
+                            return false;
+                        "
                     >
                         <div class="nav-mobile-ico">
                             <svg
@@ -1151,7 +1265,10 @@
                     <a
                         href="#"
                         class="nav-mobile-item"
-                        onclick="scrollToSection('resultsSection')"
+                        onclick="
+                            scrollToSection('resultsSection');
+                            return false;
+                        "
                     >
                         <div class="nav-mobile-ico">
                             <svg
@@ -1190,7 +1307,10 @@
                     <a
                         href="#"
                         class="nav-mobile-item"
-                        onclick="scrollToSection('rulesSection')"
+                        onclick="
+                            scrollToSection('rulesSection');
+                            return false;
+                        "
                     >
                         <div class="nav-mobile-ico">
                             <svg
@@ -1233,7 +1353,7 @@
                 <div class="nav-mobile-foot">
                     <div class="nav-mobile-tags">
                         <span class="chip">Tsukamoto</span>
-                        <span class="chip lime">v2.0</span>
+                        <span class="chip lime">v2.1</span>
                         <span class="chip">JUTIF</span>
                     </div>
                     <div class="nav-mobile-meta">
@@ -1243,8 +1363,10 @@
                 </div>
             </div>
         </div>
+
+        <div class="toast-container" id="toastContainer"></div>
+
         <div class="wrap">
-            <!-- HERO -->
             <section class="hero">
                 <div>
                     <h1 class="display">
@@ -1265,10 +1387,8 @@
                 </div>
             </section>
 
-            <!-- GRID -->
             <div class="grid">
-                <!-- LEFT: INPUT -->
-                <div>
+                <div id="inputSection">
                     <div class="card">
                         <div class="card-head">
                             <h3>Data Pendaftar</h3>
@@ -1277,7 +1397,6 @@
                             >
                         </div>
                         <div class="card-body">
-                            <!-- IPK -->
                             <div class="field">
                                 <div class="field-label">
                                     <span class="name"
@@ -1293,12 +1412,12 @@
                                         min="0"
                                         max="4"
                                         placeholder="3.40"
+                                        value="3.40"
                                     />
                                     <span class="suffix">/ 4.00</span>
                                 </div>
                             </div>
 
-                            <!-- PENDAPATAN -->
                             <div class="field">
                                 <div class="field-label">
                                     <span class="name"
@@ -1316,11 +1435,11 @@
                                         step="100000"
                                         min="0"
                                         placeholder="2500000"
+                                        value="2500000"
                                     />
                                 </div>
                             </div>
 
-                            <!-- KEAKTIFAN: CARD SELECTOR -->
                             <div class="field">
                                 <div class="field-label">
                                     <span class="name"
@@ -1564,9 +1683,7 @@
                     </div>
                 </div>
 
-                <!-- RIGHT: OUTPUT -->
-                <div>
-                    <!-- EMPTY STATE -->
+                <div id="resultsSection">
                     <div id="emptyState" class="empty">
                         <div class="em-ico">
                             <svg
@@ -1601,9 +1718,7 @@
                         </p>
                     </div>
 
-                    <!-- RESULTS -->
                     <div id="resultsState" class="hidden">
-                        <!-- HERO RESULT -->
                         <div class="result-hero pop">
                             <div>
                                 <div class="label">Skor Kelayakan Akhir</div>
@@ -1655,7 +1770,6 @@
                             </div>
                         </div>
 
-                        <!-- NARRATIVE -->
                         <div
                             class="narrative pop"
                             style="animation-delay: 0.08s"
@@ -1664,7 +1778,6 @@
                             <p id="narrativeText">—</p>
                         </div>
 
-                        <!-- INSIGHTS -->
                         <div class="insights">
                             <div
                                 class="insight pop"
@@ -1749,11 +1862,10 @@
                             </div>
                         </div>
 
-                        <!-- RULES TRACEABILITY -->
                         <div
                             class="rules pop"
                             style="animation-delay: 0.3s"
-                            id="rulesPanel"
+                            id="rulesSection"
                         >
                             <div
                                 class="rules-head"
@@ -1793,7 +1905,7 @@
                                     </svg>
                                 </div>
                             </div>
-                            <div class="rules-body">
+                            <div class="rules-body" id="rulesPanel">
                                 <table>
                                     <thead>
                                         <tr>
@@ -1848,7 +1960,82 @@
 
         <script>
             // ==========================================
-            // 1. ACTIVITY CARD SELECTOR
+            // TOAST NOTIFICATION SYSTEM
+            // ==========================================
+            function showToast(type, title, message, duration = 4000) {
+                const container = document.getElementById("toastContainer");
+                const toast = document.createElement("div");
+                toast.className = `toast ${type}`;
+
+                const icons = {
+                    error: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+                    success:
+                        '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+                    warning:
+                        '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+                };
+
+                toast.innerHTML = `
+      <div class="toast-ico">${icons[type]}</div>
+      <div class="toast-content">
+        <div class="toast-title">${title}</div>
+        <div class="toast-msg">${message}</div>
+      </div>
+      <button class="toast-close" onclick="this.parentElement.classList.add('hide'); setTimeout(() => this.parentElement.remove(), 300);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    `;
+
+                container.appendChild(toast);
+
+                setTimeout(() => {
+                    toast.classList.add("hide");
+                    setTimeout(() => toast.remove(), 300);
+                }, duration);
+            }
+
+            // ==========================================
+            // NAV TOGGLE (MOBILE)
+            // ==========================================
+            let navOpen = false;
+            let overlayEl = null;
+
+            function toggleNav() {
+                navOpen = !navOpen;
+                const toggle = document.getElementById("navToggle");
+                const mobile = document.getElementById("navMobile");
+
+                if (!overlayEl) {
+                    overlayEl = document.createElement("div");
+                    overlayEl.className = "nav-overlay";
+                    overlayEl.onclick = toggleNav;
+                    document.body.appendChild(overlayEl);
+                }
+
+                toggle.classList.toggle("open", navOpen);
+                mobile.classList.toggle("open", navOpen);
+                overlayEl.classList.toggle("show", navOpen);
+                document.body.style.overflow = navOpen ? "hidden" : "";
+            }
+
+            function scrollToSection(id) {
+                toggleNav();
+                setTimeout(() => {
+                    const el = document.getElementById(id);
+                    if (el)
+                        el.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start",
+                        });
+                }, 300);
+            }
+
+            document.addEventListener("keydown", (e) => {
+                if (e.key === "Escape" && navOpen) toggleNav();
+            });
+
+            // ==========================================
+            // ACTIVITY CARD SELECTOR
             // ==========================================
             let selectedActivity = 65;
             document.querySelectorAll(".act-card").forEach((card) => {
@@ -1862,7 +2049,7 @@
             });
 
             // ==========================================
-            // 2. FUZZIFICATION FUNCTIONS (JUTIF spec)
+            // FUZZIFICATION FUNCTIONS (JUTIF spec)
             // ==========================================
             function fuzzIPK(x) {
                 let r = 0,
@@ -1917,9 +2104,10 @@
             }
 
             // ==========================================
-            // 3. RULE BASE
+            // EXTENDED RULE BASE (27 combinations covered)
             // ==========================================
             const rules = [
+                // HIGH IPK rules
                 {
                     id: "R1",
                     ipk: "tinggi",
@@ -1937,58 +2125,181 @@
                 {
                     id: "R3",
                     ipk: "tinggi",
+                    pendapatan: "rendah",
+                    organisasi: "kurang",
+                    output: "dipertimbangkan",
+                },
+                {
+                    id: "R4",
+                    ipk: "tinggi",
                     pendapatan: "sedang",
                     organisasi: "sangat",
                     output: "layak",
                 },
                 {
-                    id: "R4",
-                    ipk: "sedang",
-                    pendapatan: "rendah",
-                    organisasi: "cukup",
-                    output: "dipertimbangkan",
-                },
-                {
                     id: "R5",
-                    ipk: "sedang",
+                    ipk: "tinggi",
                     pendapatan: "sedang",
                     organisasi: "cukup",
-                    output: "dipertimbangkan",
+                    output: "layak",
                 },
                 {
                     id: "R6",
-                    ipk: "sedang",
-                    pendapatan: "tinggi",
+                    ipk: "tinggi",
+                    pendapatan: "sedang",
                     organisasi: "kurang",
-                    output: "tidak_layak",
+                    output: "dipertimbangkan",
                 },
                 {
                     id: "R7",
-                    ipk: "rendah",
-                    pendapatan: "tinggi",
-                    organisasi: "kurang",
-                    output: "tidak_layak",
-                },
-                {
-                    id: "R8",
-                    ipk: "rendah",
-                    pendapatan: "sedang",
-                    organisasi: "kurang",
-                    output: "tidak_layak",
-                },
-                {
-                    id: "R9",
                     ipk: "tinggi",
                     pendapatan: "tinggi",
                     organisasi: "sangat",
                     output: "dipertimbangkan",
                 },
                 {
+                    id: "R8",
+                    ipk: "tinggi",
+                    pendapatan: "tinggi",
+                    organisasi: "cukup",
+                    output: "dipertimbangkan",
+                },
+                {
+                    id: "R9",
+                    ipk: "tinggi",
+                    pendapatan: "tinggi",
+                    organisasi: "kurang",
+                    output: "tidak_layak",
+                },
+
+                // MEDIUM IPK rules
+                {
                     id: "R10",
+                    ipk: "sedang",
+                    pendapatan: "rendah",
+                    organisasi: "sangat",
+                    output: "layak",
+                },
+                {
+                    id: "R11",
+                    ipk: "sedang",
+                    pendapatan: "rendah",
+                    organisasi: "cukup",
+                    output: "dipertimbangkan",
+                },
+                {
+                    id: "R12",
+                    ipk: "sedang",
+                    pendapatan: "rendah",
+                    organisasi: "kurang",
+                    output: "dipertimbangkan",
+                },
+                {
+                    id: "R13",
+                    ipk: "sedang",
+                    pendapatan: "sedang",
+                    organisasi: "sangat",
+                    output: "dipertimbangkan",
+                },
+                {
+                    id: "R14",
+                    ipk: "sedang",
+                    pendapatan: "sedang",
+                    organisasi: "cukup",
+                    output: "dipertimbangkan",
+                },
+                {
+                    id: "R15",
+                    ipk: "sedang",
+                    pendapatan: "sedang",
+                    organisasi: "kurang",
+                    output: "tidak_layak",
+                },
+                {
+                    id: "R16",
+                    ipk: "sedang",
+                    pendapatan: "tinggi",
+                    organisasi: "sangat",
+                    output: "dipertimbangkan",
+                },
+                {
+                    id: "R17",
+                    ipk: "sedang",
+                    pendapatan: "tinggi",
+                    organisasi: "cukup",
+                    output: "tidak_layak",
+                },
+                {
+                    id: "R18",
+                    ipk: "sedang",
+                    pendapatan: "tinggi",
+                    organisasi: "kurang",
+                    output: "tidak_layak",
+                },
+
+                // LOW IPK rules
+                {
+                    id: "R19",
                     ipk: "rendah",
                     pendapatan: "rendah",
                     organisasi: "sangat",
                     output: "dipertimbangkan",
+                },
+                {
+                    id: "R20",
+                    ipk: "rendah",
+                    pendapatan: "rendah",
+                    organisasi: "cukup",
+                    output: "dipertimbangkan",
+                },
+                {
+                    id: "R21",
+                    ipk: "rendah",
+                    pendapatan: "rendah",
+                    organisasi: "kurang",
+                    output: "tidak_layak",
+                },
+                {
+                    id: "R22",
+                    ipk: "rendah",
+                    pendapatan: "sedang",
+                    organisasi: "sangat",
+                    output: "dipertimbangkan",
+                },
+                {
+                    id: "R23",
+                    ipk: "rendah",
+                    pendapatan: "sedang",
+                    organisasi: "cukup",
+                    output: "tidak_layak",
+                },
+                {
+                    id: "R24",
+                    ipk: "rendah",
+                    pendapatan: "sedang",
+                    organisasi: "kurang",
+                    output: "tidak_layak",
+                },
+                {
+                    id: "R25",
+                    ipk: "rendah",
+                    pendapatan: "tinggi",
+                    organisasi: "sangat",
+                    output: "dipertimbangkan",
+                },
+                {
+                    id: "R26",
+                    ipk: "rendah",
+                    pendapatan: "tinggi",
+                    organisasi: "cukup",
+                    output: "tidak_layak",
+                },
+                {
+                    id: "R27",
+                    ipk: "rendah",
+                    pendapatan: "tinggi",
+                    organisasi: "kurang",
+                    output: "tidak_layak",
                 },
             ];
 
@@ -2000,23 +2311,53 @@
             }
 
             // ==========================================
-            // 4. MAIN PROCESS
+            // MAIN PROCESS
             // ==========================================
             function processFuzzy() {
-                const ipk = parseFloat(document.getElementById("ipk").value);
-                const pend = parseFloat(
-                    document.getElementById("pendapatan").value,
-                );
+                const ipkInput = document.getElementById("ipk");
+                const pendInput = document.getElementById("pendapatan");
+
+                const ipk = parseFloat(ipkInput.value);
+                const pend = parseFloat(pendInput.value);
                 const org = selectedActivity;
 
-                if (isNaN(ipk) || isNaN(pend)) {
-                    alert("Lengkapi IPK dan Pendapatan.");
+                // Validation with toast
+                if (isNaN(ipk) || ipkInput.value.trim() === "") {
+                    showToast(
+                        "error",
+                        "IPK Belum Diisi",
+                        "Silakan masukkan nilai IPK antara 0.00 - 4.00",
+                    );
+                    ipkInput.focus();
                     return;
                 }
+                if (isNaN(pend) || pendInput.value.trim() === "") {
+                    showToast(
+                        "error",
+                        "Pendapatan Belum Diisi",
+                        "Silakan masukkan pendapatan orang tua per bulan",
+                    );
+                    pendInput.focus();
+                    return;
+                }
+                if (ipk < 0 || ipk > 4) {
+                    showToast(
+                        "warning",
+                        "IPK Di Luar Rentang",
+                        "Nilai IPK harus antara 0.00 - 4.00. Sistem akan menyesuaikan.",
+                    );
+                }
+                if (pend < 0) {
+                    showToast(
+                        "warning",
+                        "Pendapatan Tidak Valid",
+                        "Pendapatan tidak boleh negatif. Sistem akan menyesuaikan.",
+                    );
+                }
 
-                const muI = fuzzIPK(ipk);
-                const muP = fuzzPendapatan(pend);
-                const muO = fuzzOrganisasi(org);
+                const muI = fuzzIPK(Math.max(0, Math.min(4, ipk)));
+                const muP = fuzzPendapatan(Math.max(0, pend));
+                const muO = fuzzOrganisasi(Math.max(0, Math.min(100, org)));
 
                 let sumA = 0,
                     sumAZ = 0,
@@ -2036,11 +2377,34 @@
                 });
 
                 if (sumA === 0) {
-                    alert("Kombinasi input tidak memenuhi aturan manapun.");
+                    showToast(
+                        "warning",
+                        "Aturan Tidak Terpenuhi",
+                        "Kombinasi input tidak memenuhi aturan manapun. Menggunakan fallback default.",
+                    );
+                    const score = 50;
+                    renderResults(
+                        score,
+                        muI,
+                        muP,
+                        muO,
+                        [],
+                        ipk,
+                        pend,
+                        org,
+                        0,
+                        0,
+                        true,
+                    );
                     return;
                 }
-                const score = sumAZ / sumA;
 
+                const score = sumAZ / sumA;
+                showToast(
+                    "success",
+                    "Analisis Selesai",
+                    `Skor kelayakan: ${score.toFixed(1)}/100`,
+                );
                 renderResults(
                     score,
                     muI,
@@ -2052,51 +2416,12 @@
                     org,
                     sumA,
                     sumAZ,
+                    false,
                 );
             }
-            // ==========================================
-            // NAV TOGGLE (MOBILE)
-            // ==========================================
-            let navOpen = false;
-            let overlayEl = null;
-
-            function toggleNav() {
-                navOpen = !navOpen;
-                const toggle = document.getElementById("navToggle");
-                const mobile = document.getElementById("navMobile");
-
-                if (!overlayEl) {
-                    overlayEl = document.createElement("div");
-                    overlayEl.className = "nav-overlay";
-                    overlayEl.onclick = toggleNav;
-                    document.body.appendChild(overlayEl);
-                }
-
-                toggle.classList.toggle("open", navOpen);
-                mobile.classList.toggle("open", navOpen);
-                overlayEl.classList.toggle("show", navOpen);
-                document.body.style.overflow = navOpen ? "hidden" : "";
-            }
-
-            function scrollToSection(id) {
-                toggleNav();
-                setTimeout(() => {
-                    const el = document.getElementById(id);
-                    if (el)
-                        el.scrollIntoView({
-                            behavior: "smooth",
-                            block: "start",
-                        });
-                }, 300);
-            }
-
-            // Close on ESC
-            document.addEventListener("keydown", (e) => {
-                if (e.key === "Escape" && navOpen) toggleNav();
-            });
 
             // ==========================================
-            // 5. RENDER
+            // RENDER
             // ==========================================
             function renderResults(
                 score,
@@ -2109,13 +2434,13 @@
                 org,
                 sumA,
                 sumAZ,
+                isFallback,
             ) {
                 document.getElementById("emptyState").classList.add("hidden");
                 document
                     .getElementById("resultsState")
                     .classList.remove("hidden");
 
-                // Score
                 document.getElementById("finalScore").textContent =
                     score.toFixed(1);
                 const badge = document.getElementById("finalBadge");
@@ -2140,7 +2465,6 @@
                 badge.textContent = cat;
                 document.getElementById("narrativeText").innerHTML = narrative;
 
-                // Ring
                 const pct = Math.min(100, Math.max(0, score));
                 const circ = 2 * Math.PI * 78;
                 document.getElementById("ringProgress").style.strokeDasharray =
@@ -2153,8 +2477,6 @@
                 document.getElementById("ringPct").textContent =
                     Math.round(pct) + "%";
 
-                // Insights
-                // IPK
                 const ipkDom = Object.entries(muI).sort(
                     (a, b) => b[1] - a[1],
                 )[0];
@@ -2164,7 +2486,6 @@
                 document.getElementById("barIpk").style.width =
                     (ipk / 4) * 100 + "%";
 
-                // Pendapatan
                 const pendDom = Object.entries(muP).sort(
                     (a, b) => b[1] - a[1],
                 )[0];
@@ -2176,7 +2497,6 @@
                     pend <= 2000000 ? 90 : pend <= 4500000 ? 55 : 20;
                 document.getElementById("barPend").style.width = pendPct + "%";
 
-                // Organisasi
                 const orgDom = Object.entries(muO).sort(
                     (a, b) => b[1] - a[1],
                 )[0];
@@ -2195,49 +2515,59 @@
                     `Skor: ${org} · Dominan: ${orgDom[0]} (μ=${orgDom[1].toFixed(2)})`;
                 document.getElementById("barOrg").style.width = org + "%";
 
-                // Rules
                 const tbody = document.getElementById("rulesBody");
                 tbody.innerHTML = "";
-                fired.forEach((f) => {
-                    const r = f.rule;
-                    let outClass =
-                        r.output === "layak"
-                            ? "out-layak"
-                            : r.output === "dipertimbangkan"
-                              ? "out-dip"
-                              : "out-tidak";
-                    let outLabel =
-                        r.output === "layak"
-                            ? "Layak"
-                            : r.output === "dipertimbangkan"
-                              ? "Dipertimbangkan"
-                              : "Tidak Layak";
-                    const tr = document.createElement("tr");
-                    tr.innerHTML = `
-        <td>
-          <span class="rule-id">${f.id}</span>
-          <div style="margin-top:6px; font-size:12.5px; color:var(--ink-soft); line-height:1.5;">
-            IF <b>IPK ${r.ipk}</b> · <b>Pendapatan ${r.pendapatan}</b> · <b>Org ${r.organisasi}</b>
-          </div>
-        </td>
-        <td><span class="alpha">${f.alpha.toFixed(4)}</span></td>
-        <td><span class="z-val">${f.z.toFixed(2)}</span></td>
-        <td><span class="${outClass}">${outLabel}</span></td>
-      `;
-                    tbody.appendChild(tr);
-                });
+
+                if (isFallback || fired.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:40px; color:var(--ink-muted);">Tidak ada aturan yang terpenuhi. Skor default: 50.0</td></tr>`;
+                } else {
+                    fired.forEach((f) => {
+                        const r = f.rule;
+                        let outClass =
+                            r.output === "layak"
+                                ? "out-layak"
+                                : r.output === "dipertimbangkan"
+                                  ? "out-dip"
+                                  : "out-tidak";
+                        let outLabel =
+                            r.output === "layak"
+                                ? "Layak"
+                                : r.output === "dipertimbangkan"
+                                  ? "Dipertimbangkan"
+                                  : "Tidak Layak";
+                        const tr = document.createElement("tr");
+                        tr.innerHTML = `
+          <td>
+            <span class="rule-id">${f.id}</span>
+            <div style="margin-top:6px; font-size:12.5px; color:var(--ink-soft); line-height:1.5;">
+              IF <b>IPK ${r.ipk}</b> · <b>Pendapatan ${r.pendapatan}</b> · <b>Org ${r.organisasi}</b>
+            </div>
+          </td>
+          <td><span class="alpha">${f.alpha.toFixed(4)}</span></td>
+          <td><span class="z-val">${f.z.toFixed(2)}</span></td>
+          <td><span class="${outClass}">${outLabel}</span></td>
+        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+
                 document.getElementById("ruleCount").textContent =
                     fired.length + " aturan aktif dari " + rules.length;
-                document.getElementById("formulaText").innerHTML =
-                    `Z = ${sumAZ.toFixed(3)} / ${sumA.toFixed(3)} = <strong style="color:var(--ink);">${score.toFixed(2)}</strong>`;
 
-                // Open rules by default on first run
+                if (isFallback) {
+                    document.getElementById("formulaText").innerHTML =
+                        `<strong style="color:var(--ink);">Fallback: 50.00</strong>`;
+                } else {
+                    document.getElementById("formulaText").innerHTML =
+                        `Z = ${sumAZ.toFixed(3)} / ${sumA.toFixed(3)} = <strong style="color:var(--ink);">${score.toFixed(2)}</strong>`;
+                }
+
                 document.getElementById("rulesPanel").classList.add("open");
             }
 
             function resetForm() {
-                document.getElementById("ipk").value = "";
-                document.getElementById("pendapatan").value = "";
+                document.getElementById("ipk").value = "3.40";
+                document.getElementById("pendapatan").value = "2500000";
                 document
                     .querySelectorAll(".act-card")
                     .forEach((c) => c.classList.remove("selected"));
@@ -2249,6 +2579,11 @@
                 document
                     .getElementById("emptyState")
                     .classList.remove("hidden");
+                showToast(
+                    "success",
+                    "Data Direset",
+                    "Form telah dikembalikan ke nilai default",
+                );
             }
         </script>
     </body>
