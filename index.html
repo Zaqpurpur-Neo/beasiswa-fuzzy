@@ -1,0 +1,1777 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Beasiswa — Sistem Kelayakan Fuzzy Tsukamoto</title>
+        <link
+            href="https://api.fontshare.com/v2/css?f[]=satoshi@400;500;700;900&f[]=clash-display@400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --bg: #f4f3ee;
+                --ink: #0a0a0a;
+                --ink-soft: #4a4a47;
+                --ink-muted: #8a8a85;
+                --paper: #ffffff;
+                --lime: #d4ff3d;
+                --lime-dark: #b8e02a;
+                --coral: #ff6b5b;
+                --teal: #3dd9c4;
+                --butter: #ffd93d;
+                --violet: #a78bfa;
+                --border: 2px solid var(--ink);
+                --shadow: 6px 6px 0 var(--ink);
+                --shadow-lg: 10px 10px 0 var(--ink);
+                --radius: 20px;
+                --radius-sm: 12px;
+            }
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+            html,
+            body {
+                background: var(--bg);
+                color: var(--ink);
+                font-family: "Satoshi", sans-serif;
+                font-weight: 500;
+                -webkit-font-smoothing: antialiased;
+            }
+            .display {
+                font-family: "Clash Display", sans-serif;
+                letter-spacing: -0.02em;
+                font-weight: 600;
+            }
+            .mono {
+                font-family: "Satoshi", monospace;
+                font-variant-numeric: tabular-nums;
+            }
+
+            /* NAV */
+            .nav {
+                padding: 20px 40px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: var(--border);
+                background: var(--bg);
+                position: sticky;
+                top: 0;
+                z-index: 50;
+            }
+            .logo {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                font-family: "Clash Display";
+                font-weight: 700;
+                font-size: 20px;
+                letter-spacing: -0.02em;
+            }
+            .logo-mark {
+                width: 34px;
+                height: 34px;
+                background: var(--lime);
+                border: var(--border);
+                border-radius: 10px;
+                display: grid;
+                place-items: center;
+                transform: rotate(-4deg);
+            }
+            .logo-mark svg {
+                width: 18px;
+                height: 18px;
+            }
+            .nav-tag {
+                font-size: 12px;
+                padding: 6px 12px;
+                border: var(--border);
+                border-radius: 999px;
+                background: var(--paper);
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+            }
+
+            /* LAYOUT */
+            .wrap {
+                max-width: 1400px;
+                margin: 0 auto;
+                padding: 40px;
+            }
+            .hero {
+                margin-bottom: 40px;
+                display: grid;
+                grid-template-columns: 1fr auto;
+                align-items: end;
+                gap: 40px;
+            }
+            .hero h1 {
+                font-size: clamp(40px, 6vw, 76px);
+                line-height: 0.95;
+                font-family: "Clash Display";
+                font-weight: 600;
+                letter-spacing: -0.03em;
+            }
+            .hero h1 em {
+                font-style: normal;
+                background: var(--lime);
+                padding: 0 12px;
+                border-radius: 12px;
+                display: inline-block;
+                transform: rotate(-1deg);
+            }
+            .hero p {
+                margin-top: 18px;
+                font-size: 17px;
+                color: var(--ink-soft);
+                max-width: 540px;
+                line-height: 1.55;
+            }
+            .hero-meta {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                align-items: end;
+            }
+            .hero-meta .chip {
+                font-size: 12px;
+                font-weight: 700;
+                padding: 6px 12px;
+                border: var(--border);
+                border-radius: 999px;
+                background: var(--paper);
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+            }
+            .hero-meta .chip.lime {
+                background: var(--lime);
+            }
+
+            .grid {
+                display: grid;
+                grid-template-columns: 420px 1fr;
+                gap: 32px;
+            }
+            @media (max-width: 1024px) {
+                .grid {
+                    grid-template-columns: 1fr;
+                }
+                .hero {
+                    grid-template-columns: 1fr;
+                }
+                .hero-meta {
+                    align-items: start;
+                }
+            }
+
+            /* CARD BASE */
+            .card {
+                background: var(--paper);
+                border: var(--border);
+                border-radius: var(--radius);
+                box-shadow: var(--shadow);
+                transition:
+                    transform 0.2s ease,
+                    box-shadow 0.2s ease;
+            }
+            .card-head {
+                padding: 20px 24px;
+                border-bottom: var(--border);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .card-head h3 {
+                font-family: "Clash Display";
+                font-size: 18px;
+                font-weight: 600;
+                letter-spacing: -0.01em;
+            }
+            .card-body {
+                padding: 24px;
+            }
+
+            /* FORM */
+            .field {
+                margin-bottom: 28px;
+            }
+            .field:last-child {
+                margin-bottom: 0;
+            }
+            .field-label {
+                display: flex;
+                justify-content: space-between;
+                align-items: baseline;
+                margin-bottom: 10px;
+            }
+            .field-label .name {
+                font-family: "Clash Display";
+                font-weight: 600;
+                font-size: 16px;
+            }
+            .field-label .hint {
+                font-size: 12px;
+                color: var(--ink-muted);
+                font-weight: 500;
+            }
+
+            .input-wrap {
+                position: relative;
+            }
+            .input-wrap input {
+                width: 100%;
+                padding: 16px 18px;
+                border: var(--border);
+                border-radius: var(--radius-sm);
+                background: var(--bg);
+                font-family: "Satoshi";
+                font-size: 16px;
+                font-weight: 700;
+                color: var(--ink);
+                outline: none;
+                transition: all 0.15s;
+            }
+            .input-wrap input:focus {
+                background: var(--paper);
+                box-shadow: 4px 4px 0 var(--ink);
+                transform: translate(-2px, -2px);
+            }
+            .input-wrap .suffix {
+                position: absolute;
+                right: 16px;
+                top: 50%;
+                transform: translateY(-50%);
+                font-size: 13px;
+                color: var(--ink-muted);
+                font-weight: 700;
+                pointer-events: none;
+            }
+            .input-wrap .prefix {
+                position: absolute;
+                left: 16px;
+                top: 50%;
+                transform: translateY(-50%);
+                font-size: 14px;
+                color: var(--ink-soft);
+                font-weight: 700;
+                pointer-events: none;
+            }
+            .input-wrap.with-prefix input {
+                padding-left: 44px;
+            }
+
+            /* ACTIVITY CARD SELECTOR */
+            .activity-grid {
+                display: grid;
+                gap: 10px;
+            }
+            .act-card {
+                padding: 14px 16px;
+                border: 2px solid var(--ink);
+                border-radius: var(--radius-sm);
+                background: var(--paper);
+                cursor: pointer;
+                display: grid;
+                grid-template-columns: auto 1fr auto;
+                gap: 14px;
+                align-items: center;
+                transition: all 0.15s;
+            }
+            .act-card:hover {
+                transform: translate(-2px, -2px);
+                box-shadow: 4px 4px 0 var(--ink);
+            }
+            .act-card.selected {
+                background: var(--lime);
+                transform: translate(-2px, -2px);
+                box-shadow: 4px 4px 0 var(--ink);
+            }
+            .act-card .ico {
+                width: 36px;
+                height: 36px;
+                border: var(--border);
+                border-radius: 10px;
+                background: var(--bg);
+                display: grid;
+                place-items: center;
+                flex-shrink: 0;
+            }
+            .act-card.selected .ico {
+                background: var(--paper);
+            }
+            .act-card .ico svg {
+                width: 18px;
+                height: 18px;
+            }
+            .act-card .txt .t1 {
+                font-family: "Clash Display";
+                font-weight: 600;
+                font-size: 15px;
+                line-height: 1.2;
+            }
+            .act-card .txt .t2 {
+                font-size: 12.5px;
+                color: var(--ink-soft);
+                margin-top: 2px;
+                line-height: 1.35;
+            }
+            .act-card .score {
+                font-family: "Satoshi";
+                font-weight: 900;
+                font-size: 13px;
+                padding: 4px 8px;
+                border: var(--border);
+                border-radius: 8px;
+                background: var(--paper);
+            }
+            .act-card.selected .score {
+                background: var(--ink);
+                color: var(--lime);
+                border-color: var(--ink);
+            }
+
+            /* BUTTONS */
+            .btn {
+                width: 100%;
+                padding: 18px;
+                border: var(--border);
+                border-radius: var(--radius-sm);
+                font-family: "Clash Display";
+                font-weight: 600;
+                font-size: 16px;
+                letter-spacing: -0.01em;
+                cursor: pointer;
+                transition: all 0.15s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+            }
+            .btn-primary {
+                background: var(--ink);
+                color: var(--lime);
+                box-shadow: var(--shadow);
+            }
+            .btn-primary:hover {
+                transform: translate(-2px, -2px);
+                box-shadow: var(--shadow-lg);
+                background: var(--lime);
+                color: var(--ink);
+            }
+            .btn-ghost {
+                background: var(--paper);
+                color: var(--ink);
+                margin-top: 10px;
+                box-shadow: 4px 4px 0 var(--ink);
+            }
+            .btn-ghost:hover {
+                transform: translate(-2px, -2px);
+                box-shadow: 6px 6px 0 var(--ink);
+            }
+
+            /* EMPTY STATE */
+            .empty {
+                padding: 80px 40px;
+                text-align: center;
+                border: 2px dashed var(--ink);
+                border-radius: var(--radius);
+                background: var(--paper);
+            }
+            .empty .em-ico {
+                width: 64px;
+                height: 64px;
+                margin: 0 auto 20px;
+                background: var(--lime);
+                border: var(--border);
+                border-radius: 16px;
+                display: grid;
+                place-items: center;
+                transform: rotate(-6deg);
+            }
+            .empty h3 {
+                font-family: "Clash Display";
+                font-size: 24px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+            .empty p {
+                color: var(--ink-soft);
+                font-size: 15px;
+                max-width: 360px;
+                margin: 0 auto;
+            }
+
+            /* RESULT HERO */
+            .result-hero {
+                padding: 32px;
+                display: grid;
+                grid-template-columns: 1fr auto;
+                gap: 32px;
+                align-items: center;
+                background: var(--paper);
+                border: var(--border);
+                border-radius: var(--radius);
+                box-shadow: var(--shadow-lg);
+            }
+            .result-hero .label {
+                font-size: 12px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+                color: var(--ink-muted);
+                margin-bottom: 8px;
+            }
+            .result-hero .score {
+                font-family: "Clash Display";
+                font-size: 96px;
+                line-height: 1;
+                font-weight: 700;
+                letter-spacing: -0.04em;
+            }
+            .result-hero .score sup {
+                font-size: 32px;
+                vertical-align: super;
+                color: var(--ink-muted);
+                font-weight: 500;
+                margin-left: 4px;
+            }
+            .result-hero .badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 10px 18px;
+                border: var(--border);
+                border-radius: 999px;
+                font-family: "Clash Display";
+                font-weight: 600;
+                font-size: 14px;
+                margin-top: 16px;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+            .badge.layak {
+                background: var(--lime);
+            }
+            .badge.dipertimbangkan {
+                background: var(--butter);
+            }
+            .badge.tidak-layak {
+                background: var(--coral);
+                color: white;
+            }
+            .result-hero .ring {
+                width: 180px;
+                height: 180px;
+                position: relative;
+            }
+            .result-hero .ring svg {
+                transform: rotate(-90deg);
+            }
+            .result-hero .ring .center {
+                position: absolute;
+                inset: 0;
+                display: grid;
+                place-items: center;
+                text-align: center;
+            }
+            .result-hero .ring .center .small {
+                font-size: 11px;
+                color: var(--ink-muted);
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+                font-weight: 700;
+            }
+            .result-hero .ring .center .big {
+                font-family: "Clash Display";
+                font-size: 32px;
+                font-weight: 700;
+                line-height: 1;
+                margin-top: 4px;
+            }
+
+            /* NARRATIVE */
+            .narrative {
+                margin-top: 24px;
+                padding: 24px;
+                background: var(--paper);
+                border: var(--border);
+                border-radius: var(--radius);
+                box-shadow: var(--shadow);
+            }
+            .narrative .tag {
+                display: inline-block;
+                font-size: 11px;
+                font-weight: 700;
+                padding: 4px 10px;
+                background: var(--ink);
+                color: var(--lime);
+                border-radius: 6px;
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+                margin-bottom: 12px;
+            }
+            .narrative p {
+                font-size: 15.5px;
+                line-height: 1.65;
+                color: var(--ink);
+            }
+            .narrative p strong {
+                font-weight: 700;
+                background: var(--lime);
+                padding: 0 4px;
+                border-radius: 4px;
+            }
+
+            /* INSIGHTS */
+            .insights {
+                margin-top: 24px;
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+            }
+            @media (max-width: 900px) {
+                .insights {
+                    grid-template-columns: 1fr;
+                }
+            }
+            .insight {
+                padding: 20px;
+                background: var(--paper);
+                border: var(--border);
+                border-radius: var(--radius);
+                box-shadow: 4px 4px 0 var(--ink);
+            }
+            .insight .ico {
+                width: 36px;
+                height: 36px;
+                border: var(--border);
+                border-radius: 10px;
+                display: grid;
+                place-items: center;
+                margin-bottom: 14px;
+            }
+            .insight .ico.ipk {
+                background: var(--violet);
+            }
+            .insight .ico.pend {
+                background: var(--teal);
+            }
+            .insight .ico.org {
+                background: var(--butter);
+            }
+            .insight .ico svg {
+                width: 18px;
+                height: 18px;
+            }
+            .insight .k {
+                font-size: 12px;
+                color: var(--ink-muted);
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                margin-bottom: 4px;
+            }
+            .insight .v {
+                font-family: "Clash Display";
+                font-size: 22px;
+                font-weight: 600;
+                letter-spacing: -0.01em;
+                margin-bottom: 4px;
+            }
+            .insight .d {
+                font-size: 13px;
+                color: var(--ink-soft);
+                line-height: 1.45;
+            }
+            .insight .bar {
+                margin-top: 12px;
+                height: 6px;
+                background: var(--bg);
+                border-radius: 999px;
+                overflow: hidden;
+                border: 1px solid var(--ink);
+            }
+            .insight .bar > div {
+                height: 100%;
+                background: var(--ink);
+                transition: width 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            }
+
+            /* RULES TABLE */
+            .rules {
+                margin-top: 24px;
+                background: var(--paper);
+                border: var(--border);
+                border-radius: var(--radius);
+                box-shadow: var(--shadow);
+                overflow: hidden;
+            }
+            .rules-head {
+                padding: 20px 24px;
+                border-bottom: var(--border);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                cursor: pointer;
+                user-select: none;
+            }
+            .rules-head h3 {
+                font-family: "Clash Display";
+                font-size: 18px;
+                font-weight: 600;
+            }
+            .rules-head .toggle {
+                width: 32px;
+                height: 32px;
+                border: var(--border);
+                border-radius: 8px;
+                background: var(--bg);
+                display: grid;
+                place-items: center;
+                transition: transform 0.3s;
+            }
+            .rules.open .rules-head .toggle {
+                transform: rotate(180deg);
+                background: var(--lime);
+            }
+            .rules-body {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.4s ease;
+            }
+            .rules.open .rules-body {
+                max-height: 2000px;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 13.5px;
+            }
+            th {
+                text-align: left;
+                padding: 12px 16px;
+                background: var(--bg);
+                font-family: "Clash Display";
+                font-weight: 600;
+                font-size: 12px;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                color: var(--ink-soft);
+                border-bottom: var(--border);
+            }
+            td {
+                padding: 14px 16px;
+                border-bottom: 1px solid #e8e7e0;
+                vertical-align: middle;
+            }
+            tr:last-child td {
+                border-bottom: none;
+            }
+            tr:hover td {
+                background: #fafaf5;
+            }
+            .rule-id {
+                font-family: "Satoshi";
+                font-weight: 900;
+                font-size: 11px;
+                padding: 3px 8px;
+                background: var(--ink);
+                color: var(--lime);
+                border-radius: 6px;
+                letter-spacing: 0.05em;
+            }
+            .alpha {
+                font-weight: 900;
+                color: var(--ink);
+                font-variant-numeric: tabular-nums;
+            }
+            .z-val {
+                font-weight: 700;
+                font-variant-numeric: tabular-nums;
+            }
+            .out-layak {
+                color: #1a7a0f;
+                background: #e8f7d8;
+                padding: 3px 8px;
+                border-radius: 6px;
+                font-weight: 700;
+                font-size: 12px;
+            }
+            .out-dip {
+                color: #7a5a00;
+                background: #fff3c4;
+                padding: 3px 8px;
+                border-radius: 6px;
+                font-weight: 700;
+                font-size: 12px;
+            }
+            .out-tidak {
+                color: #8a1a0f;
+                background: #ffe0db;
+                padding: 3px 8px;
+                border-radius: 6px;
+                font-weight: 700;
+                font-size: 12px;
+            }
+            tfoot td {
+                background: var(--bg);
+                font-weight: 700;
+                font-family: "Satoshi";
+                border-top: var(--border);
+            }
+            .formula {
+                font-family: "Satoshi";
+                font-weight: 700;
+                font-size: 13px;
+            }
+
+            /* FOOTER */
+            footer {
+                margin-top: 60px;
+                padding: 30px 40px;
+                border-top: var(--border);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 13px;
+                color: var(--ink-muted);
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+            footer .dot {
+                display: inline-block;
+                width: 8px;
+                height: 8px;
+                background: var(--lime);
+                border: 1px solid var(--ink);
+                border-radius: 50%;
+                margin-right: 6px;
+                vertical-align: middle;
+            }
+
+            /* ANIMATIONS */
+            @keyframes pop {
+                from {
+                    opacity: 0;
+                    transform: translateY(12px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            .pop {
+                animation: pop 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+            }
+            .hidden {
+                display: none !important;
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="nav">
+            <div class="logo">
+                <div class="logo-mark">
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                        <path d="M2 17l10 5 10-5" />
+                        <path d="M2 12l10 5 10-5" />
+                    </svg>
+                </div>
+                <span
+                    >Beasiswa<span style="color: var(--ink-muted)"
+                        >.fuzzy</span
+                    ></span
+                >
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center">
+                <span class="nav-tag">Tsukamoto Engine</span>
+                <span class="nav-tag lime" style="background: var(--lime)"
+                    >v2.0</span
+                >
+            </div>
+        </nav>
+
+        <div class="wrap">
+            <!-- HERO -->
+            <section class="hero">
+                <div>
+                    <h1 class="display">
+                        Kelayakan beasiswa,<br />dihitung dengan
+                        <em>logika</em>,<br />bukan asumsi.
+                    </h1>
+                    <p>
+                        Sistem Inferensi Fuzzy Tsukamoto memetakan tiga kriteria
+                        utama — IPK, pendapatan, dan keaktifan — menjadi skor
+                        kelayakan yang transparan, dapat diaudit, dan bebas
+                        bias.
+                    </p>
+                </div>
+                <div class="hero-meta">
+                    <span class="chip lime">Metode Tsukamoto</span>
+                    <span class="chip">Pure JavaScript</span>
+                    <span class="chip">JUTIF Unsoed</span>
+                </div>
+            </section>
+
+            <!-- GRID -->
+            <div class="grid">
+                <!-- LEFT: INPUT -->
+                <div>
+                    <div class="card">
+                        <div class="card-head">
+                            <h3>Data Pendaftar</h3>
+                            <span class="nav-tag" style="font-size: 10px"
+                                >3 Variabel</span
+                            >
+                        </div>
+                        <div class="card-body">
+                            <!-- IPK -->
+                            <div class="field">
+                                <div class="field-label">
+                                    <span class="name"
+                                        >Indeks Prestasi Kumulatif</span
+                                    >
+                                    <span class="hint">Skala 0.00 — 4.00</span>
+                                </div>
+                                <div class="input-wrap">
+                                    <input
+                                        type="number"
+                                        id="ipk"
+                                        step="0.01"
+                                        min="0"
+                                        max="4"
+                                        placeholder="3.40"
+                                        value="3.40"
+                                    />
+                                    <span class="suffix">/ 4.00</span>
+                                </div>
+                            </div>
+
+                            <!-- PENDAPATAN -->
+                            <div class="field">
+                                <div class="field-label">
+                                    <span class="name"
+                                        >Pendapatan Orang Tua</span
+                                    >
+                                    <span class="hint"
+                                        >Per bulan, dalam Rupiah</span
+                                    >
+                                </div>
+                                <div class="input-wrap with-prefix">
+                                    <span class="prefix">Rp</span>
+                                    <input
+                                        type="number"
+                                        id="pendapatan"
+                                        step="100000"
+                                        min="0"
+                                        placeholder="2500000"
+                                        value="2500000"
+                                    />
+                                </div>
+                            </div>
+
+                            <!-- KEAKTIFAN: CARD SELECTOR -->
+                            <div class="field">
+                                <div class="field-label">
+                                    <span class="name"
+                                        >Tingkat Keaktifan Organisasi</span
+                                    >
+                                    <span class="hint"
+                                        >Pilih yang paling sesuai</span
+                                    >
+                                </div>
+                                <div class="activity-grid" id="activityGrid">
+                                    <div class="act-card" data-score="15">
+                                        <div class="ico">
+                                            <svg
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="2"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                            >
+                                                <circle
+                                                    cx="12"
+                                                    cy="12"
+                                                    r="10"
+                                                />
+                                                <path
+                                                    d="M8 14s1.5 2 4 2 4-2 4-2"
+                                                />
+                                                <line
+                                                    x1="9"
+                                                    y1="9"
+                                                    x2="9.01"
+                                                    y2="9"
+                                                />
+                                                <line
+                                                    x1="15"
+                                                    y1="9"
+                                                    x2="15.01"
+                                                    y2="9"
+                                                />
+                                            </svg>
+                                        </div>
+                                        <div class="txt">
+                                            <div class="t1">Tidak Aktif</div>
+                                            <div class="t2">
+                                                Tidak mengikuti organisasi
+                                                kampus apapun
+                                            </div>
+                                        </div>
+                                        <div class="score">0–25</div>
+                                    </div>
+                                    <div class="act-card" data-score="40">
+                                        <div class="ico">
+                                            <svg
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="2"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                            >
+                                                <circle
+                                                    cx="12"
+                                                    cy="12"
+                                                    r="10"
+                                                />
+                                                <path d="M8 15h8" />
+                                                <line
+                                                    x1="9"
+                                                    y1="9"
+                                                    x2="9.01"
+                                                    y2="9"
+                                                />
+                                                <line
+                                                    x1="15"
+                                                    y1="9"
+                                                    x2="15.01"
+                                                    y2="9"
+                                                />
+                                            </svg>
+                                        </div>
+                                        <div class="txt">
+                                            <div class="t1">Kurang Aktif</div>
+                                            <div class="t2">
+                                                Anggota pasif, jarang mengikuti
+                                                kegiatan
+                                            </div>
+                                        </div>
+                                        <div class="score">25–50</div>
+                                    </div>
+                                    <div
+                                        class="act-card selected"
+                                        data-score="65"
+                                    >
+                                        <div class="ico">
+                                            <svg
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="2"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                            >
+                                                <circle
+                                                    cx="12"
+                                                    cy="12"
+                                                    r="10"
+                                                />
+                                                <path
+                                                    d="M8 14s1.5 2 4 2 4-2 4-2"
+                                                />
+                                                <line
+                                                    x1="9"
+                                                    y1="9"
+                                                    x2="9.01"
+                                                    y2="9"
+                                                />
+                                                <line
+                                                    x1="15"
+                                                    y1="9"
+                                                    x2="15.01"
+                                                    y2="9"
+                                                />
+                                                <path d="M12 3v2" />
+                                            </svg>
+                                        </div>
+                                        <div class="txt">
+                                            <div class="t1">Cukup Aktif</div>
+                                            <div class="t2">
+                                                Staf divisi / anggota rutin
+                                                organisasi
+                                            </div>
+                                        </div>
+                                        <div class="score">50–75</div>
+                                    </div>
+                                    <div class="act-card" data-score="85">
+                                        <div class="ico">
+                                            <svg
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="2"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                            >
+                                                <circle
+                                                    cx="12"
+                                                    cy="12"
+                                                    r="10"
+                                                />
+                                                <path
+                                                    d="M8 14s1.5 2 4 2 4-2 4-2"
+                                                />
+                                                <line
+                                                    x1="9"
+                                                    y1="9"
+                                                    x2="9.01"
+                                                    y2="9"
+                                                />
+                                                <line
+                                                    x1="15"
+                                                    y1="9"
+                                                    x2="15.01"
+                                                    y2="9"
+                                                />
+                                                <path
+                                                    d="M12 3v2M9 5l1 1M15 5l-1 1"
+                                                />
+                                            </svg>
+                                        </div>
+                                        <div class="txt">
+                                            <div class="t1">Aktif</div>
+                                            <div class="t2">
+                                                Pengurus inti / koordinator
+                                                divisi
+                                            </div>
+                                        </div>
+                                        <div class="score">75–90</div>
+                                    </div>
+                                    <div class="act-card" data-score="97">
+                                        <div class="ico">
+                                            <svg
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="2"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                            >
+                                                <circle
+                                                    cx="12"
+                                                    cy="12"
+                                                    r="10"
+                                                />
+                                                <path
+                                                    d="M8 14s1.5 2 4 2 4-2 4-2"
+                                                />
+                                                <path
+                                                    d="M9 10l1 1M15 10l-1 1"
+                                                />
+                                                <path
+                                                    d="M12 2v3M5 5l2 2M19 5l-2 2"
+                                                />
+                                            </svg>
+                                        </div>
+                                        <div class="txt">
+                                            <div class="t1">Sangat Aktif</div>
+                                            <div class="t2">
+                                                Ketua / pengurus tinggi
+                                                multi-organisasi
+                                            </div>
+                                        </div>
+                                        <div class="score">90–100</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button
+                                class="btn btn-primary"
+                                onclick="processFuzzy()"
+                            >
+                                Hitung Kelayakan
+                                <svg
+                                    width="18"
+                                    height="18"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2.5"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <line x1="5" y1="12" x2="19" y2="12" />
+                                    <polyline points="12 5 19 12 12 19" />
+                                </svg>
+                            </button>
+                            <button class="btn btn-ghost" onclick="resetForm()">
+                                Reset Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: OUTPUT -->
+                <div>
+                    <!-- EMPTY STATE -->
+                    <div id="emptyState" class="empty">
+                        <div class="em-ico">
+                            <svg
+                                width="28"
+                                height="28"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path
+                                    d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                                />
+                                <polyline points="14 2 14 8 20 8" />
+                                <line x1="9" y1="15" x2="15" y2="15" />
+                            </svg>
+                        </div>
+                        <h3>Belum ada analisis.</h3>
+                        <p>
+                            Lengkapi data di panel kiri, lalu tekan
+                            <strong
+                                style="
+                                    background: var(--lime);
+                                    padding: 0 4px;
+                                    border-radius: 4px;
+                                "
+                                >Hitung Kelayakan</strong
+                            >
+                            untuk melihat rekomendasi sistem.
+                        </p>
+                    </div>
+
+                    <!-- RESULTS -->
+                    <div id="resultsState" class="hidden">
+                        <!-- HERO RESULT -->
+                        <div class="result-hero pop">
+                            <div>
+                                <div class="label">Skor Kelayakan Akhir</div>
+                                <div class="score">
+                                    <span id="finalScore">0</span
+                                    ><sup>/100</sup>
+                                </div>
+                                <div id="finalBadge" class="badge layak">
+                                    Menunggu
+                                </div>
+                            </div>
+                            <div class="ring">
+                                <svg
+                                    width="180"
+                                    height="180"
+                                    viewBox="0 0 180 180"
+                                >
+                                    <circle
+                                        cx="90"
+                                        cy="90"
+                                        r="78"
+                                        fill="none"
+                                        stroke="#E8E7E0"
+                                        stroke-width="12"
+                                    />
+                                    <circle
+                                        id="ringProgress"
+                                        cx="90"
+                                        cy="90"
+                                        r="78"
+                                        fill="none"
+                                        stroke="#0A0A0A"
+                                        stroke-width="12"
+                                        stroke-linecap="round"
+                                        stroke-dasharray="490"
+                                        stroke-dashoffset="490"
+                                        style="
+                                            transition: stroke-dashoffset 1s
+                                                cubic-bezier(0.2, 0.8, 0.2, 1);
+                                        "
+                                    />
+                                </svg>
+                                <div class="center">
+                                    <div>
+                                        <div class="small">Confidence</div>
+                                        <div class="big" id="ringPct">0%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- NARRATIVE -->
+                        <div
+                            class="narrative pop"
+                            style="animation-delay: 0.08s"
+                        >
+                            <span class="tag">Ringkasan Analisis</span>
+                            <p id="narrativeText">—</p>
+                        </div>
+
+                        <!-- INSIGHTS -->
+                        <div class="insights">
+                            <div
+                                class="insight pop"
+                                style="animation-delay: 0.12s"
+                            >
+                                <div class="ico ipk">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2.5"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <path
+                                            d="M22 10v6M2 10l10-5 10 5-10 5z"
+                                        />
+                                        <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                                    </svg>
+                                </div>
+                                <div class="k">Akademik (IPK)</div>
+                                <div class="v" id="insIpk">—</div>
+                                <div class="d" id="insIpkD">—</div>
+                                <div class="bar">
+                                    <div id="barIpk" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div
+                                class="insight pop"
+                                style="animation-delay: 0.18s"
+                            >
+                                <div class="ico pend">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2.5"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <line x1="12" y1="1" x2="12" y2="23" />
+                                        <path
+                                            d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
+                                        />
+                                    </svg>
+                                </div>
+                                <div class="k">Finansial</div>
+                                <div class="v" id="insPend">—</div>
+                                <div class="d" id="insPendD">—</div>
+                                <div class="bar">
+                                    <div id="barPend" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div
+                                class="insight pop"
+                                style="animation-delay: 0.24s"
+                            >
+                                <div class="ico org">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2.5"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <path
+                                            d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
+                                        />
+                                        <circle cx="9" cy="7" r="4" />
+                                        <path
+                                            d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"
+                                        />
+                                    </svg>
+                                </div>
+                                <div class="k">Keaktifan</div>
+                                <div class="v" id="insOrg">—</div>
+                                <div class="d" id="insOrgD">—</div>
+                                <div class="bar">
+                                    <div id="barOrg" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- RULES TRACEABILITY -->
+                        <div
+                            class="rules pop"
+                            style="animation-delay: 0.3s"
+                            id="rulesPanel"
+                        >
+                            <div
+                                class="rules-head"
+                                onclick="
+                                    document
+                                        .getElementById('rulesPanel')
+                                        .classList.toggle('open')
+                                "
+                            >
+                                <div>
+                                    <h3>Traceability Matrix</h3>
+                                    <div
+                                        style="
+                                            font-size: 12px;
+                                            color: var(--ink-muted);
+                                            margin-top: 2px;
+                                        "
+                                    >
+                                        Audit transparansi penalaran fuzzy —
+                                        <span id="ruleCount"
+                                            >0 aturan aktif</span
+                                        >
+                                    </div>
+                                </div>
+                                <div class="toggle">
+                                    <svg
+                                        width="16"
+                                        height="16"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2.5"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <polyline points="6 9 12 15 18 9" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="rules-body">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 40%">
+                                                Aturan (IF → THEN)
+                                            </th>
+                                            <th>α-Predikat</th>
+                                            <th>Nilai Z<sub>i</sub></th>
+                                            <th>Konsekuen</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="rulesBody"></tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td
+                                                colspan="2"
+                                                style="text-align: right"
+                                            >
+                                                Defuzzifikasi (Weighted
+                                                Average):
+                                            </td>
+                                            <td colspan="2">
+                                                <span
+                                                    class="formula"
+                                                    id="formulaText"
+                                                    >Z = Σ(α<sub>i</sub> ×
+                                                    Z<sub>i</sub>) / Σα<sub
+                                                        >i</sub
+                                                    ></span
+                                                >
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div>
+                <span class="dot"></span>Sistem Inferensi Fuzzy Tsukamoto —
+                Implementasi Murni JavaScript
+            </div>
+            <div>
+                Berdasarkan standar JUTIF · Universitas Jenderal Soedirman ·
+                2026
+            </div>
+        </footer>
+
+        <script>
+            // ==========================================
+            // 1. ACTIVITY CARD SELECTOR
+            // ==========================================
+            let selectedActivity = 65;
+            document.querySelectorAll(".act-card").forEach((card) => {
+                card.addEventListener("click", () => {
+                    document
+                        .querySelectorAll(".act-card")
+                        .forEach((c) => c.classList.remove("selected"));
+                    card.classList.add("selected");
+                    selectedActivity = parseInt(card.dataset.score);
+                });
+            });
+
+            // ==========================================
+            // 2. FUZZIFICATION FUNCTIONS (JUTIF spec)
+            // ==========================================
+            function fuzzIPK(x) {
+                let r = 0,
+                    s = 0,
+                    t = 0;
+                if (x <= 2.5) r = 1;
+                else if (x < 3.0) r = (3.0 - x) / 0.5;
+                if (x >= 2.75 && x <= 3.0) s = (x - 2.75) / 0.25;
+                else if (x > 3.0 && x <= 3.5) s = (3.5 - x) / 0.5;
+                if (x <= 3.25) t = 0;
+                else if (x < 4.0) t = (x - 3.25) / 0.75;
+                else t = 1;
+                return {
+                    rendah: +r.toFixed(4),
+                    sedang: +s.toFixed(4),
+                    tinggi: +t.toFixed(4),
+                };
+            }
+            function fuzzPendapatan(x) {
+                let r = 0,
+                    s = 0,
+                    t = 0;
+                if (x <= 1500000) r = 1;
+                else if (x < 2000000) r = (2000000 - x) / 500000;
+                if (x >= 1500000 && x <= 2500000) s = (x - 1500000) / 1000000;
+                else if (x > 2500000 && x <= 4500000)
+                    s = (4500000 - x) / 2000000;
+                if (x <= 4000000) t = 0;
+                else if (x < 6000000) t = (x - 4000000) / 2000000;
+                else t = 1;
+                return {
+                    rendah: +r.toFixed(4),
+                    sedang: +s.toFixed(4),
+                    tinggi: +t.toFixed(4),
+                };
+            }
+            function fuzzOrganisasi(x) {
+                let k = 0,
+                    c = 0,
+                    sa = 0;
+                if (x <= 50) k = (50 - x) / 50;
+                if (x >= 40 && x <= 55) c = (x - 40) / 15;
+                else if (x > 55 && x <= 75) c = (75 - x) / 20;
+                if (x <= 70) sa = 0;
+                else if (x < 100) sa = (x - 70) / 30;
+                else sa = 1;
+                return {
+                    kurang: +k.toFixed(4),
+                    cukup: +c.toFixed(4),
+                    sangat: +sa.toFixed(4),
+                };
+            }
+
+            // ==========================================
+            // 3. RULE BASE
+            // ==========================================
+            const rules = [
+                {
+                    id: "R1",
+                    ipk: "tinggi",
+                    pendapatan: "rendah",
+                    organisasi: "sangat",
+                    output: "layak",
+                },
+                {
+                    id: "R2",
+                    ipk: "tinggi",
+                    pendapatan: "rendah",
+                    organisasi: "cukup",
+                    output: "layak",
+                },
+                {
+                    id: "R3",
+                    ipk: "tinggi",
+                    pendapatan: "sedang",
+                    organisasi: "sangat",
+                    output: "layak",
+                },
+                {
+                    id: "R4",
+                    ipk: "sedang",
+                    pendapatan: "rendah",
+                    organisasi: "cukup",
+                    output: "dipertimbangkan",
+                },
+                {
+                    id: "R5",
+                    ipk: "sedang",
+                    pendapatan: "sedang",
+                    organisasi: "cukup",
+                    output: "dipertimbangkan",
+                },
+                {
+                    id: "R6",
+                    ipk: "sedang",
+                    pendapatan: "tinggi",
+                    organisasi: "kurang",
+                    output: "tidak_layak",
+                },
+                {
+                    id: "R7",
+                    ipk: "rendah",
+                    pendapatan: "tinggi",
+                    organisasi: "kurang",
+                    output: "tidak_layak",
+                },
+                {
+                    id: "R8",
+                    ipk: "rendah",
+                    pendapatan: "sedang",
+                    organisasi: "kurang",
+                    output: "tidak_layak",
+                },
+                {
+                    id: "R9",
+                    ipk: "tinggi",
+                    pendapatan: "tinggi",
+                    organisasi: "sangat",
+                    output: "dipertimbangkan",
+                },
+                {
+                    id: "R10",
+                    ipk: "rendah",
+                    pendapatan: "rendah",
+                    organisasi: "sangat",
+                    output: "dipertimbangkan",
+                },
+            ];
+
+            function calcZ(type, a) {
+                if (type === "tidak_layak") return 40 - a * 40;
+                if (type === "dipertimbangkan") return 30 + a * 40;
+                if (type === "layak") return 60 + a * 40;
+                return 0;
+            }
+
+            // ==========================================
+            // 4. MAIN PROCESS
+            // ==========================================
+            function processFuzzy() {
+                const ipk = parseFloat(document.getElementById("ipk").value);
+                const pend = parseFloat(
+                    document.getElementById("pendapatan").value,
+                );
+                const org = selectedActivity;
+
+                if (isNaN(ipk) || isNaN(pend)) {
+                    alert("Lengkapi IPK dan Pendapatan.");
+                    return;
+                }
+
+                const muI = fuzzIPK(ipk);
+                const muP = fuzzPendapatan(pend);
+                const muO = fuzzOrganisasi(org);
+
+                let sumA = 0,
+                    sumAZ = 0,
+                    fired = [];
+                rules.forEach((r) => {
+                    const a = Math.min(
+                        muI[r.ipk],
+                        muP[r.pendapatan],
+                        muO[r.organisasi],
+                    );
+                    if (a > 0) {
+                        const z = calcZ(r.output, a);
+                        sumA += a;
+                        sumAZ += a * z;
+                        fired.push({ id: r.id, rule: r, alpha: a, z: z });
+                    }
+                });
+
+                if (sumA === 0) {
+                    alert("Kombinasi input tidak memenuhi aturan manapun.");
+                    return;
+                }
+                const score = sumAZ / sumA;
+
+                renderResults(
+                    score,
+                    muI,
+                    muP,
+                    muO,
+                    fired,
+                    ipk,
+                    pend,
+                    org,
+                    sumA,
+                    sumAZ,
+                );
+            }
+
+            // ==========================================
+            // 5. RENDER
+            // ==========================================
+            function renderResults(
+                score,
+                muI,
+                muP,
+                muO,
+                fired,
+                ipk,
+                pend,
+                org,
+                sumA,
+                sumAZ,
+            ) {
+                document.getElementById("emptyState").classList.add("hidden");
+                document
+                    .getElementById("resultsState")
+                    .classList.remove("hidden");
+
+                // Score
+                document.getElementById("finalScore").textContent =
+                    score.toFixed(1);
+                const badge = document.getElementById("finalBadge");
+                let cat = "",
+                    catClass = "",
+                    narrative = "";
+
+                if (score >= 70) {
+                    cat = "Layak Diberikan";
+                    catClass = "layak";
+                    narrative = `Berdasarkan penalaran Fuzzy Tsukamoto, pendaftar ini <strong>direkomendasikan untuk menerima beasiswa</strong> dengan skor kelayakan <strong>${score.toFixed(1)}/100</strong>. Kombinasi profil akademik, kondisi finansial, dan keaktifan organisasi membentuk pola yang selaras dengan kriteria prioritas penerima.`;
+                } else if (score >= 40) {
+                    cat = "Dipertimbangkan";
+                    catClass = "dipertimbangkan";
+                    narrative = `Pendaftar berada pada <strong>zona pertimbangan</strong> dengan skor <strong>${score.toFixed(1)}/100</strong>. Profil tidak secara tegas masuk kategori prioritas utama maupun yang harus ditolak — keputusan akhir dapat mempertimbangkan faktor tambahan seperti kuota atau kriteria khusus.`;
+                } else {
+                    cat = "Tidak Layak";
+                    catClass = "tidak-layak";
+                    narrative = `Dengan skor <strong>${score.toFixed(1)}/100</strong>, pendaftar <strong>tidak memenuhi prioritas kelayakan</strong> berdasarkan kombinasi kriteria saat ini. Hasil ini mencerminkan pemetaan fuzzy yang objektif, bukan penilaian subjektif.`;
+                }
+                badge.className = "badge " + catClass;
+                badge.textContent = cat;
+                document.getElementById("narrativeText").innerHTML = narrative;
+
+                // Ring
+                const pct = Math.min(100, Math.max(0, score));
+                const circ = 2 * Math.PI * 78;
+                document.getElementById("ringProgress").style.strokeDasharray =
+                    circ;
+                setTimeout(() => {
+                    document.getElementById(
+                        "ringProgress",
+                    ).style.strokeDashoffset = circ - (circ * pct) / 100;
+                }, 100);
+                document.getElementById("ringPct").textContent =
+                    Math.round(pct) + "%";
+
+                // Insights
+                // IPK
+                const ipkDom = Object.entries(muI).sort(
+                    (a, b) => b[1] - a[1],
+                )[0];
+                document.getElementById("insIpk").textContent = ipk.toFixed(2);
+                document.getElementById("insIpkD").textContent =
+                    `Dominan: ${ipkDom[0]} (μ=${ipkDom[1].toFixed(2)})`;
+                document.getElementById("barIpk").style.width =
+                    (ipk / 4) * 100 + "%";
+
+                // Pendapatan
+                const pendDom = Object.entries(muP).sort(
+                    (a, b) => b[1] - a[1],
+                )[0];
+                document.getElementById("insPend").textContent =
+                    "Rp " + pend.toLocaleString("id-ID");
+                document.getElementById("insPendD").textContent =
+                    `Dominan: ${pendDom[0]} (μ=${pendDom[1].toFixed(2)})`;
+                const pendPct =
+                    pend <= 2000000 ? 90 : pend <= 4500000 ? 55 : 20;
+                document.getElementById("barPend").style.width = pendPct + "%";
+
+                // Organisasi
+                const orgDom = Object.entries(muO).sort(
+                    (a, b) => b[1] - a[1],
+                )[0];
+                const orgLabel =
+                    org <= 25
+                        ? "Tidak Aktif"
+                        : org <= 50
+                          ? "Kurang Aktif"
+                          : org <= 75
+                            ? "Cukup Aktif"
+                            : org <= 90
+                              ? "Aktif"
+                              : "Sangat Aktif";
+                document.getElementById("insOrg").textContent = orgLabel;
+                document.getElementById("insOrgD").textContent =
+                    `Skor: ${org} · Dominan: ${orgDom[0]} (μ=${orgDom[1].toFixed(2)})`;
+                document.getElementById("barOrg").style.width = org + "%";
+
+                // Rules
+                const tbody = document.getElementById("rulesBody");
+                tbody.innerHTML = "";
+                fired.forEach((f) => {
+                    const r = f.rule;
+                    let outClass =
+                        r.output === "layak"
+                            ? "out-layak"
+                            : r.output === "dipertimbangkan"
+                              ? "out-dip"
+                              : "out-tidak";
+                    let outLabel =
+                        r.output === "layak"
+                            ? "Layak"
+                            : r.output === "dipertimbangkan"
+                              ? "Dipertimbangkan"
+                              : "Tidak Layak";
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+        <td>
+          <span class="rule-id">${f.id}</span>
+          <div style="margin-top:6px; font-size:12.5px; color:var(--ink-soft); line-height:1.5;">
+            IF <b>IPK ${r.ipk}</b> · <b>Pendapatan ${r.pendapatan}</b> · <b>Org ${r.organisasi}</b>
+          </div>
+        </td>
+        <td><span class="alpha">${f.alpha.toFixed(4)}</span></td>
+        <td><span class="z-val">${f.z.toFixed(2)}</span></td>
+        <td><span class="${outClass}">${outLabel}</span></td>
+      `;
+                    tbody.appendChild(tr);
+                });
+                document.getElementById("ruleCount").textContent =
+                    fired.length + " aturan aktif dari " + rules.length;
+                document.getElementById("formulaText").innerHTML =
+                    `Z = ${sumAZ.toFixed(3)} / ${sumA.toFixed(3)} = <strong style="color:var(--ink);">${score.toFixed(2)}</strong>`;
+
+                // Open rules by default on first run
+                document.getElementById("rulesPanel").classList.add("open");
+            }
+
+            function resetForm() {
+                document.getElementById("ipk").value = "";
+                document.getElementById("pendapatan").value = "";
+                document
+                    .querySelectorAll(".act-card")
+                    .forEach((c) => c.classList.remove("selected"));
+                document
+                    .querySelector('.act-card[data-score="65"]')
+                    .classList.add("selected");
+                selectedActivity = 65;
+                document.getElementById("resultsState").classList.add("hidden");
+                document
+                    .getElementById("emptyState")
+                    .classList.remove("hidden");
+            }
+        </script>
+    </body>
+</html>
